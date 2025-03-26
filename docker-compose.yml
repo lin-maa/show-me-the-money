@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  xero-mock:
+    image: jaypeng2015/show-me-the-money
+    container_name: xero-mock
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - XERO_API_URL=http://xero-mock:3000/api.xro/2.0/Reports/BalanceSheet
+    depends_on:
+      - xero-mock
+    networks:
+      - app-network
+    ports:
+      - "4000:4000"
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge 

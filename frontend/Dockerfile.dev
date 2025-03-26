@@ -1,0 +1,21 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy environment and configuration files
+COPY .env.development ./
+COPY tsconfig.json ./
+COPY public/ ./public/
+
+# Set environment and expose port
+ENV NODE_ENV=development
+ENV WDS_SOCKET_PORT=3001
+ENV WDS_SOCKET_HOST=localhost
+EXPOSE 3000
+
+# Start development server
+CMD ["npm", "start"] 
